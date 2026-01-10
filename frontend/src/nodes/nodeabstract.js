@@ -1,8 +1,8 @@
 // nodeabstract.js
 
 import { Handle, Position } from 'reactflow';
+import { motion } from 'motion/react';
 
-//Maybe make this an wrapper component
 export const Abstractnode = ({
   handle,
   node,
@@ -11,16 +11,18 @@ export const Abstractnode = ({
   typeprop,
 }) => {
   return (
-    <div
-      className="shadow-lg bg-white w-50 h-48 p-5 shadow-black rounded-2xl"
-      style={{ border: '1px solid black' }}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{  transition: { duration: 0.2 } }}
+      className="relative group bg-white/60 backdrop-blur-xl p-6 rounded-[28px] border border-white/40 shadow-xl shadow-slate-200/50 hover:shadow-indigo-500/10 transition-all duration-300 "
     >
       <div>
         {handle?.map((h) => (
           <Handle
-            type="target"
+            type={h.type}
             key={h.id}
-            position={h.type === 'target' ? Position.Right : Position.Left}
+            position={h.type === 'target' ? Position.Left : Position.Right}
             id={h.id}
             style={{ height: '10px', width: '10px', ...h.style }}
           />
@@ -55,7 +57,9 @@ export const Abstractnode = ({
               onChange={typeprop.handleTypeChange}
             >
               {typeprop.option?.map((o) => (
-                <option value={o.type}>{o.name}</option>
+                <option key={o.name} value={o.type}>
+                  {o.name}
+                </option>
               ))}
             </select>
           </label>
@@ -63,6 +67,6 @@ export const Abstractnode = ({
       ) : null}
 
       <div>{children}</div>
-    </div>
+    </motion.div>
   );
 };

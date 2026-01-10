@@ -30,9 +30,9 @@ export const InputNode = ({ id, data }) => {
 
   const handle = [
     {
-      type: 'target',
+      type: 'source',
       style: {},
-      id: `${id}-target`,
+      id: `${id}-value`,
     },
   ];
   const inputprop = {
