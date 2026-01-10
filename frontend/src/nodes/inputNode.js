@@ -1,10 +1,12 @@
 // inputNode.js
 
 import { useState } from 'react';
-import { Handle, Position } from 'reactflow';
+import { Abstractnode } from './nodeabstract';
 
 export const InputNode = ({ id, data }) => {
-  const [currName, setCurrName] = useState(data?.inputName || id.replace('customInput-', 'input_'));
+  const [currName, setCurrName] = useState(
+    data?.inputName || id.replace('customInput-', 'input_')
+  );
   const [inputType, setInputType] = useState(data.inputType || 'Text');
 
   const handleNameChange = (e) => {
@@ -15,33 +17,45 @@ export const InputNode = ({ id, data }) => {
     setInputType(e.target.value);
   };
 
+  const node = {
+    id: id,
+    name: 'Input ',
+    type: 'input',
+    description: 'Name: ',
+    data: {
+      inputName: currName,
+      inputType: inputType,
+    },
+  };
+
+  const handle = [
+    {
+      type: 'target',
+      style: {},
+      id: `${id}-target`,
+    },
+  ];
+  const inputprop = {
+    type: 'text',
+    currName: currName,
+    handleNameChange: handleNameChange,
+  };
+  const typeprop = {
+    inputType: inputType,
+    handleTypeChange: handleTypeChange,
+    option: [
+      { type: 'Text', name: 'Text' },
+      { type: 'File', name: 'File' },
+    ],
+  };
   return (
-    <div style={{width: 200, height: 80, border: '1px solid black'}}>
-      <div>
-        <span>Input</span>
-      </div>
-      <div>
-        <label>
-          Name:
-          <input 
-            type="text" 
-            value={currName} 
-            onChange={handleNameChange} 
-          />
-        </label>
-        <label>
-          Type:
-          <select value={inputType} onChange={handleTypeChange}>
-            <option value="Text">Text</option>
-            <option value="File">File</option>
-          </select>
-        </label>
-      </div>
-      <Handle
-        type="source"
-        position={Position.Right}
-        id={`${id}-value`}
-      />
-    </div>
+    <Abstractnode
+      handle={handle}
+      node={node}
+      inputprop={inputprop}
+      typeprop={typeprop}
+    >
+      <div className=""></div>
+    </Abstractnode>
   );
-}
+};
