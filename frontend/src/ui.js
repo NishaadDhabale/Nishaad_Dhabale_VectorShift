@@ -17,6 +17,7 @@ import { Subtract } from './nodes/subtract';
 import { Multiply } from './nodes/multiply';
 import { Code } from './nodes/code';
 import { VideoNode } from './nodes/videotranscript';
+import ButtonEdge from './components/ButtonEdge';
 
 const gridSize = 20;
 const proOptions = { hideAttribution: true };
@@ -29,7 +30,7 @@ const nodeTypes = {
   subtract: Subtract,
   multiply: Multiply,
   code: Code,
-  video:VideoNode,
+  video: VideoNode,
 };
 
 const selector = (state) => ({
@@ -41,7 +42,9 @@ const selector = (state) => ({
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
 });
-
+const edgeTypes = {
+  custom: ButtonEdge,
+};
 export const PipelineUI = () => {
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
@@ -113,6 +116,7 @@ export const PipelineUI = () => {
           onDragOver={onDragOver}
           onInit={setReactFlowInstance}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           proOptions={proOptions}
           snapGrid={[gridSize, gridSize]}
           connectionLineType="smoothstep"
