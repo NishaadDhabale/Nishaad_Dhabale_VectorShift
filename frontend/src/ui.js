@@ -18,6 +18,7 @@ import { Multiply } from './nodes/multiply';
 import { Code } from './nodes/code';
 import { VideoNode } from './nodes/videotranscript';
 import ButtonEdge from './components/ButtonEdge';
+import NodeAppendix from './components/ui/NodeAppendix';
 
 const gridSize = 20;
 const proOptions = { hideAttribution: true };
@@ -31,6 +32,7 @@ const nodeTypes = {
   multiply: Multiply,
   code: Code,
   video: VideoNode,
+  appendix:NodeAppendix
 };
 
 const selector = (state) => ({

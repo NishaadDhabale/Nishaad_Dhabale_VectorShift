@@ -1,21 +1,17 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export const GraphAnalysisCard = ({ onClose }) => {
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+export const GraphAnalysisCard = ({ response, loading, onClose }) => {
   const [showResult, setShowResult] = useState(false);
   const cardRef = useRef(null);
 
-
   const handleReset = () => {
     setShowResult(false);
-    setIsAnalyzing(false);
     onClose();
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 p-6">
-
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -39,7 +35,7 @@ export const GraphAnalysisCard = ({ onClose }) => {
 
         <div className="relative bg-white/70 bg-opacity-100 backdrop-blur-2xl border border-white/40 rounded-[32px] shadow-2xl overflow-hidden transition-all duration-300">
           <AnimatePresence mode="wait">
-            {isAnalyzing ? (
+            {loading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 Processing...
@@ -63,35 +59,35 @@ export const GraphAnalysisCard = ({ onClose }) => {
 
                 <div className="flex  w-full items-center justify-between mb-4 px-2">
                   <div className=" w-1/2">
-                  <div className="flex w-full justify-start gap-16">
-                    <h4 className="text-md font-bold text-gray-800">
-                      No. Nodes
-                    </h4>
-                  </div>
-                  <div className="flex w-full justify-start gap-16">
-                    <h4 className="text-md font-bold text-gray-800">
-                      No. Edges
-                    </h4>
-                  </div>{' '}
-                  <div className="flex w-full justify-start gap-16">
-                    <h4 className="text-md font-bold text-gray-800">DAG</h4>
-                  </div>
+                    <div className="flex w-full justify-start gap-16">
+                      <h4 className="text-md font-bold text-gray-800">
+                        No. Nodes
+                      </h4>
+                    </div>
+                    <div className="flex w-full justify-start gap-16">
+                      <h4 className="text-md font-bold text-gray-800">
+                        No. Edges
+                      </h4>
+                    </div>{' '}
+                    <div className="flex w-full justify-start gap-16">
+                      <h4 className="text-md font-bold text-gray-800">DAG</h4>
+                    </div>
                   </div>
 
                   <div className="w-1/2">
-                  <div className="flex w-full justify-start gap-16">
-                    <h4 className="text-md font-bold text-gray-800">
-                      No. Nodes
-                    </h4>
-                  </div>
-                  <div className="flex w-full justify-start gap-16">
-                    <h4 className="text-md font-bold text-gray-800">
-                      No. Edges
-                    </h4>
-                  </div>{' '}
-                  <div className="flex w-full justify-start gap-16">
-                    <h4 className="text-md font-bold text-gray-800">DAG</h4>
-                  </div>
+                    <div className="flex w-full justify-start gap-16">
+                      <h4 className="text-md font-bold text-gray-800">
+                        {response.num_nodes}
+                      </h4>
+                    </div>
+                    <div className="flex w-full justify-start gap-16">
+                      <h4 className="text-md font-bold text-gray-800">
+                        {response.num_edges}
+                      </h4>
+                    </div>{' '}
+                    <div className="flex w-full justify-start gap-16">
+                      <h4 className="text-md font-bold text-gray-800">{response.is_dag}</h4>
+                    </div>
                   </div>
                 </div>
 

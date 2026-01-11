@@ -4,17 +4,17 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Check } from 'lucide-react';
 import { useStore } from './store';
 
-export const SubmitButton = ({ setModal }) => {
+export const SubmitButton = ({ setLoading, setResponse, setModal }) => {
   const [submitted, setSubmitted] = useState(false);
   const [visible, setVisible] = useState(true);
   const { nodes, edges } = useStore();
-
   const handleSubmit = async () => {
     setSubmitted(true);
     if (setModal) setModal(true);
 
     try {
-      // Send nodes and edges to the /pipelines/parse endpoint
+  
+
       const response = await fetch('http://localhost:8000/pipelines/parse', {
         method: 'POST',
         headers: {
@@ -27,14 +27,8 @@ export const SubmitButton = ({ setModal }) => {
 
       if (response.ok) {
         const result = await response.json();
-
-        // Display result in a user-friendly alert
-        alert(
-          `Pipeline Submission Successful!\n\n` +
-            `• Nodes: ${result.num_nodes}\n` +
-            `• Edges: ${result.num_edges}\n` +
-            `• Is DAG: ${result.is_dag ? 'Yes' : 'No'}`
-        );
+        setResponse(result);
+        setLoading(false);
       } else {
         alert('Server error: Failed to parse pipeline.');
       }
@@ -65,6 +59,7 @@ export const SubmitButton = ({ setModal }) => {
             <motion.button
               onClick={() => {
                 setSubmitted(true);
+                setLoading(true);
                 handleSubmit();
                 setModal(true);
               }}

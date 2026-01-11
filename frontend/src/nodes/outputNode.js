@@ -1,7 +1,6 @@
 // outputNode.js
 
 import { useState } from 'react';
-import { Handle, Position } from 'reactflow';
 import { Abstractnode } from '../components/nodeabstract';
 
 export const OutputNode = ({ id, data }) => {
@@ -19,6 +18,7 @@ export const OutputNode = ({ id, data }) => {
   };
 
   const node = {
+    id: id,
     name: 'Output',
     type: 'Output',
     description: 'Name:',

@@ -21,7 +21,7 @@ export const LLMNode = ({ id, data }) => {
         <div className="mt-4">
           <div className="mb-1 flex items-center justify-between text-sm font-medium text-gray-700">
             <span>System </span>
-            {handle[2].id}
+
             <span className="text-gray-400">Prompt</span>
           </div>
         </div>

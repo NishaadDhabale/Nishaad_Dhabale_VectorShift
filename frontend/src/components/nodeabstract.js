@@ -6,11 +6,13 @@ import Input from './ui/text';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { useStore } from '../store';
 import { shallow } from 'zustand/shallow';
+import NodeAppendix from './ui/NodeAppendix';
 
 const selector = (state) => ({
   nodes: state.nodes,
   edges: state.edges,
   onConnect: state.onConnect,
+  deleteNode: state.deleteNode,
 });
 
 const getSourceHandleId = (node) => {
@@ -28,15 +30,15 @@ const getSourceHandleId = (node) => {
     case 'subtract':
       return `${node.id}-value`;
     case 'code':
-      // CHANGE: Was '-output', must be '-outcome' to match code.js
+
       return `${node.id}-outcome`;
     case 'video':
     case 'Video transcript':
-      // CHANGE: Was '-response', must be '-transcribbed' to match videotranscript.js
+
       return `${node.id}-transcribbed`;
     case 'condition':
     case 'conditionnode':
-       // CHANGE: Default to 'else'. Condition nodes are tricky because they have two.
+
       return `${node.id}-else`;
     default:
       return `${node.id}-output`;
@@ -50,7 +52,7 @@ export const Abstractnode = ({
   inputprop,
   typeprop,
 }) => {
-  const { nodes, edges, onConnect } = useStore(selector, shallow);
+  const { nodes, edges, onConnect, deleteNode } = useStore(selector, shallow);
   const [showOptions, setShowOptions] = useState(false);
   const [cursorPos, setCursorPos] = useState(0);
   const updateNodeInternals = useUpdateNodeInternals();
@@ -87,16 +89,21 @@ export const Abstractnode = ({
     const matches = [...currValue.matchAll(variableRegex)];
     const tokens = [...new Set(matches.map((m) => m[1]))];
 
- const timer = setTimeout(() => {
+    const timer = setTimeout(() => {
       tokens.forEach((token) => {
         const sourceNode = nodes.find((n) => {
-           const defaultHandle = getSourceHandleId(n);
-           return defaultHandle === token || n.id === token || (n.data && n.data.id === token);
+          const defaultHandle = getSourceHandleId(n);
+          return (
+            defaultHandle === token ||
+            n.id === token ||
+            (n.data && n.data.id === token)
+          );
         });
 
         if (sourceNode) {
           const defaultSourceHandle = getSourceHandleId(sourceNode);
-          const effectiveSourceHandle = (token === sourceNode.id) ? defaultSourceHandle : token;
+          const effectiveSourceHandle =
+            token === sourceNode.id ? defaultSourceHandle : token;
 
           const targetHandle = `${node.id}-${token}`;
 
@@ -118,22 +125,18 @@ export const Abstractnode = ({
           }
         }
       });
-    }, 100); // Wait 100ms for handles to render
-
-    // NEW: Clean up timeout to prevent memory leaks
+    }, 100);
     return () => clearTimeout(timer);
   }, [currValue, nodes, edges, node.id, onConnect]);
 
-  
   const handleInputChange = (e) => {
     const val = e.target.value;
     const newCursorPos = e.target.selectionStart;
     setCursorPos(newCursorPos);
 
-    // Call the parent's change handler
+
     if (handleChange) handleChange(e);
 
-    // Simple trigger: if we just typed "{{", show options
     const textBeforeCursor = val.slice(0, newCursorPos);
     if (textBeforeCursor.endsWith('{{')) {
       setShowOptions(true);
@@ -142,13 +145,13 @@ export const Abstractnode = ({
     }
   };
 
-const insertVariable = (valueToInsert) => {
+  const insertVariable = (valueToInsert) => {
     const textBefore = currValue.slice(0, cursorPos);
     const lastOpenBrace = textBefore.lastIndexOf('{{');
 
     let newValue;
     if (lastOpenBrace !== -1) {
-      // Replace text from '{{' to cursor with '{{HandleID}}'
+
       newValue =
         currValue.slice(0, lastOpenBrace) +
         `{{${valueToInsert}}}` +
@@ -163,26 +166,37 @@ const insertVariable = (valueToInsert) => {
     setShowOptions(false);
   };
 
-const availableOptions = nodes
+  const availableOptions = nodes
     .filter((n) => n.id !== node.id)
     .flatMap((n) => {
       const handleId = getSourceHandleId(n);
 
-      // Special check for condition nodes to show both options
       if (n.type === 'condition' || n.type === 'conditionnode') {
         return [
           { id: `${n.id}-else`, label: `${n.id} (Else)`, nodeId: n.id },
-          { id: `${n.id}-else-if`, label: `${n.id} (Else If)`, nodeId: n.id }
+          { id: `${n.id}-else-if`, label: `${n.id} (Else If)`, nodeId: n.id },
         ];
       }
 
-      return [{
-        id: handleId,
-        label: handleId,
-        nodeId: n.id
-      }];
+      return [
+        {
+          id: handleId,
+          label: handleId,
+          nodeId: n.id,
+        },
+      ];
     })
-    .filter(opt => opt.id);
+    .filter((opt) => opt.id);
+
+  const data = {
+    title: 'Static Node',
+    badge: 'VIEW',
+    description: 'This node cannot connect to others.',
+    fields: [
+      { label: 'Mode', value: 'Read Only' },
+      { label: 'Status', value: 'Locked' },
+    ],
+  };
 
   return (
     <div>
@@ -190,7 +204,7 @@ const availableOptions = nodes
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 0.9, y: 0 }}
         whileHover={{ transition: { duration: 0.2 } }}
-        className="p-3  bg-white/60  backdrop-blur-xl min-w-48 rounded-[28px] border border-white/40 shadow-xl shadow-slate-200/50 hover:shadow-indigo-500/10 transition-all duration-300 "
+        className="p-3  bg-white/60  backdrop-blur-xl  rounded-[28px] border border-white/40 min-w-60 shadow-xl shadow-slate-200/50 hover:shadow-indigo-500/10 transition-all duration-300 "
       >
         <div className="max-w-md rounded-xl border bg-white p-4 shadow-sm">
           <div className="flex items-center justify-between">
@@ -207,7 +221,14 @@ const availableOptions = nodes
 
             <div className="flex items-center gap-3 text-gray-500">
               <button className="hover:text-gray-700">⟳</button>
-              <button className="hover:text-gray-700">⚙</button>
+              <button
+                onClick={() => {
+                  deleteNode(node.id);
+                }}
+                className="hover:text-gray-700"
+              >
+                X
+              </button>
             </div>
           </div>
           <div className="mt-3 rounded-md bg-gray-100 px-3 py-1.5 text-center text-sm text-gray-600">
@@ -283,6 +304,20 @@ const availableOptions = nodes
             style={h.style}
           />
         ))}
+      </div>
+
+      <div>
+        <NodeAppendix position={'right'}>
+          <div className="w-40">
+            {handle
+              ?.filter((h) => h.type === 'source')
+              .map((h) => (
+                <div key={h.id} className="p-1 w-full">
+                  id = {h.id}
+                </div>
+              ))}
+          </div>
+        </NodeAppendix>
       </div>
     </div>
   );
