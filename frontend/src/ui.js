@@ -12,7 +12,11 @@ import { OutputNode } from './nodes/outputNode';
 import { TextNode } from './nodes/textNode';
 
 import 'reactflow/dist/style.css';
-
+import { ConditionNode } from './nodes/conditionNode';
+import { Subtract } from './nodes/subtract';
+import { Multiply } from './nodes/multiply';
+import { Code } from './nodes/code';
+import { VideoNode } from './nodes/videotranscript';
 
 const gridSize = 20;
 const proOptions = { hideAttribution: true };
@@ -21,7 +25,11 @@ const nodeTypes = {
   llm: LLMNode,
   customOutput: OutputNode,
   text: TextNode,
-
+  condition: ConditionNode,
+  subtract: Subtract,
+  multiply: Multiply,
+  code: Code,
+  video:VideoNode,
 };
 
 const selector = (state) => ({
@@ -109,7 +117,11 @@ export const PipelineUI = () => {
           snapGrid={[gridSize, gridSize]}
           connectionLineType="smoothstep"
         >
-          <Background className="bg-gradient-to-bl from-fuchsia-50 to-indigo-100/50 " color="#aaa" gap={gridSize} />
+          <Background
+            className="bg-gradient-to-bl from-fuchsia-50 to-indigo-100/50 "
+            color="#aaa"
+            gap={gridSize}
+          />
           <Controls />
           <MiniMap />
         </ReactFlow>
