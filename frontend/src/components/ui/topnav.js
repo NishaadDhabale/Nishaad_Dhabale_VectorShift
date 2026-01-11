@@ -1,8 +1,10 @@
 import { motion } from 'motion/react';
 import { Search, Play, Save, Share2, Code2, X } from 'lucide-react';
 import { Slider } from './slider.js';
+import { useStore } from '../../store.js';
 
 export const TopNav = ()=>{
+  const deleteAllNodes = useStore((state) => state.deleteAllNodes);
 return (
 <div className="flex items-center justify-between mb-2 text-sm text-muted-foreground p-1 border-b-2">
         <div>
@@ -21,6 +23,7 @@ return (
               key={idx}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={deleteAllNodes}
               className="flex h-8 w-8 items-center justify-center rounded-lg border hover:bg-muted"
             >
               <Icon className="h-4 w-4" />

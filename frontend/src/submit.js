@@ -2,11 +2,47 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Check } from 'lucide-react';
+import { useStore } from './store';
 
-export const SubmitButton = ({setModal}) => {
+export const SubmitButton = ({ setModal }) => {
   const [submitted, setSubmitted] = useState(false);
   const [visible, setVisible] = useState(true);
+  const { nodes, edges } = useStore();
 
+  const handleSubmit = async () => {
+    setSubmitted(true);
+    if (setModal) setModal(true);
+
+    try {
+      // Send nodes and edges to the /pipelines/parse endpoint
+      const response = await fetch('http://localhost:8000/pipelines/parse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          pipeline: JSON.stringify({ nodes, edges }),
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+
+        // Display result in a user-friendly alert
+        alert(
+          `Pipeline Submission Successful!\n\n` +
+            `• Nodes: ${result.num_nodes}\n` +
+            `• Edges: ${result.num_edges}\n` +
+            `• Is DAG: ${result.is_dag ? 'Yes' : 'No'}`
+        );
+      } else {
+        alert('Server error: Failed to parse pipeline.');
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      alert('Error connecting to backend.');
+    }
+  };
   useEffect(() => {
     if (submitted) {
       const hideTimer = setTimeout(() => setVisible(false), 1200);
@@ -27,23 +63,23 @@ export const SubmitButton = ({setModal}) => {
         <AnimatePresence>
           {visible && (
             <motion.button
-              onClick={() =>{
-                 setSubmitted(true);
-                 setModal(true);}
-                }
+              onClick={() => {
+                setSubmitted(true);
+                handleSubmit();
+                setModal(true);
+              }}
               whileTap={{ scale: 0.95 }}
               exit={{ opacity: 0, scale: 0.5 }}
               animate={{
                 backgroundColor: submitted ? '#35db3a' : '#111827',
                 width: submitted ? 44 : 120,
-                borderRadius: submitted ? "9999px" : "12px",
+                borderRadius: submitted ? '9999px' : '12px',
               }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               className="flex h-11 items-center justify-center overflow-hidden rounded-lg text-sm  font-medium text-white"
             >
               {submitted ? (
                 <motion.div
-
                   initial={{ scale: 0, rotate: -90 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 15 }}

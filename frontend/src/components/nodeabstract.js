@@ -1,8 +1,9 @@
 // nodeabstract.js
 
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, useUpdateNodeInternals } from 'reactflow';
 import { motion } from 'motion/react';
 import Input from './ui/text';
+import { useEffect, useMemo } from 'react';
 
 export const Abstractnode = ({
   handle,
@@ -11,6 +12,58 @@ export const Abstractnode = ({
   inputprop,
   typeprop,
 }) => {
+  const variableRegex = /\{\{\s*([a-zA-Z_$\-][a-zA-Z0-9_$\-]*)\s*\}\}/g;
+  const dynamicHandles = useMemo(() => {
+    const text = inputprop?.currName || inputprop?.currText || '';
+    const matches = [...text.matchAll(variableRegex)];
+    const variables = [...new Set(matches.map((match) => match[1]))];
+
+    return variables.map((varName, index) => ({
+      type: 'target',
+      id: `${node.id}-${varName}`,
+
+      style: { top: `${(index + 1) * (100 / (variables.length + 1))}%` },
+    }));
+  }, [inputprop?.currName, inputprop?.currText, node.id]);
+
+  const allHandles = useMemo(() => {
+    return [...(handle || []), ...dynamicHandles];
+  }, [handle, dynamicHandles]);
+
+  const updateNodeInternals = useUpdateNodeInternals();
+
+  useEffect(() => {
+    updateNodeInternals(node.id);
+  }, [node.id, allHandles, updateNodeInternals]);
+
+  const autoConnect = (currentNodeId, text, nodes, edges) => {
+    const matches = [...text.matchAll(variableRegex)];
+    const variableNames = [...new Set(matches.map((m) => m[1]))];
+
+    const newEdges = variableNames
+      .map((varName) => {
+        // Check if a node with this ID exists
+        const sourceNodeExists = nodes.some((n) => n.id === varName);
+        // Check if the edge already exists to avoid infinite loops
+        const edgeExists = edges.some(
+          (e) => e.source === varName && e.target === currentNodeId
+        );
+        if (sourceNodeExists && !edgeExists) {
+          return {
+            id: `auto-${varName}-${currentNodeId}`,
+            source: varName, // The variable name is the ID of the source node
+            target: currentNodeId,
+            targetHandle: `${currentNodeId}-${varName}`, // ID of the handle you created in Abstractnode
+            type: 'smoothstep', // Or your preferred edge type
+            animated: true,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean); // Remove nulls (where node doesn't exist or edge already there)
+    return newEdges;
+  };
+
   return (
     <div>
       <motion.div
@@ -74,7 +127,7 @@ export const Abstractnode = ({
         </div>
       </motion.div>
       <div>
-        {handle?.map((h) => (
+        {allHandles?.map((h) => (
           <Handle
             type={h.type}
             key={h.id}
