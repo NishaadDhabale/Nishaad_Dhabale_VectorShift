@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Handle, Position } from 'reactflow';
-import { Abstractnode } from './nodeabstract';
+import { Abstractnode } from '../components/nodeabstract';
 
 export const TextNode = ({ id, data }) => {
   const [currText, setCurrText] = useState(data?.text || '{{input}}');

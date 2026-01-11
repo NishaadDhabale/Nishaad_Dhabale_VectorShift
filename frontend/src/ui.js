@@ -12,7 +12,7 @@ import { OutputNode } from './nodes/outputNode';
 import { TextNode } from './nodes/textNode';
 
 import 'reactflow/dist/style.css';
-import { Abstractnode } from './nodes/nodeabstract';
+
 
 const gridSize = 20;
 const proOptions = { hideAttribution: true };
@@ -21,7 +21,7 @@ const nodeTypes = {
   llm: LLMNode,
   customOutput: OutputNode,
   text: TextNode,
-  abstract: Abstractnode
+
 };
 
 const selector = (state) => ({
@@ -109,7 +109,7 @@ export const PipelineUI = () => {
           snapGrid={[gridSize, gridSize]}
           connectionLineType="smoothstep"
         >
-          <Background color="#aaa" gap={gridSize} />
+          <Background className="bg-gradient-to-bl from-fuchsia-50 to-indigo-100/50 " color="#aaa" gap={gridSize} />
           <Controls />
           <MiniMap />
         </ReactFlow>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Handle, Position } from 'reactflow';
-import { Abstractnode } from './nodeabstract';
+import { Abstractnode } from '../components/nodeabstract';
 
 export const OutputNode = ({ id, data }) => {
   const [currName, setCurrName] = useState(

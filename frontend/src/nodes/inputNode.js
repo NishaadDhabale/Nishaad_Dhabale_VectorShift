@@ -1,7 +1,7 @@
 // inputNode.js
 
 import { useState } from 'react';
-import { Abstractnode } from './nodeabstract';
+import { Abstractnode } from '../components/nodeabstract';
 
 export const InputNode = ({ id, data }) => {
   const [currName, setCurrName] = useState(
