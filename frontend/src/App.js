@@ -9,7 +9,7 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <div>
-            <AnimatePresence>
+      <AnimatePresence>
         {isModalOpen && (
           <GraphAnalysisCard onClose={() => setIsModalOpen(false)} />
         )}

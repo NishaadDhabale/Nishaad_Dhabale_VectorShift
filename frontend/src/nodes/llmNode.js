@@ -2,6 +2,7 @@
 
 import { Handle, Position } from 'reactflow';
 import { Abstractnode } from '../components/nodeabstract';
+import Input from '../components/ui/text';
 
 export const LLMNode = ({ id, data }) => {
   const handle = [
@@ -11,12 +12,20 @@ export const LLMNode = ({ id, data }) => {
   ];
   const node = {
     name: 'LLM',
+    id: id,
     type: 'LLM',
     description: 'This is a LLM.',
   };
   return (
     <Abstractnode handle={handle} node={node}>
-      <div></div>
+      <div>
+        <div className="mt-4">
+          <div className="mb-1 flex items-center justify-between text-sm font-medium text-gray-700">
+            <span>System </span>
+            <span className="text-gray-400">Prompt</span>
+          </div>
+        </div>
+      </div>
     </Abstractnode>
   );
 };

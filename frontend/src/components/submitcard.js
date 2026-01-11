@@ -20,6 +20,7 @@ export const GraphAnalysisCard = ({ onClose }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        delay={0.3}
         onClick={onClose}
         className="absolute inset-0 bg-black/20 backdrop-blur-md cursor-pointer"
       />

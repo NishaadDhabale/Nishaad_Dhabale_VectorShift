@@ -4,7 +4,7 @@ import { Slider } from './slider.js';
 
 export const TopNav = ()=>{
 return (
-<div className="flex items-center justify-between mb-2 text-sm text-muted-foreground">
+<div className="flex items-center justify-between mb-2 text-sm text-muted-foreground p-1 border-b-2">
         <div>
           <span className="font-medium text-foreground">Projects</span> / New
           Project 1 /{' '}
@@ -21,7 +21,7 @@ return (
               key={idx}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border hover:bg-muted"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border hover:bg-muted"
             >
               <Icon className="h-4 w-4" />
             </motion.button>
@@ -30,7 +30,7 @@ return (
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="flex items-center gap-1 rounded-lg border px-3 py-1.5 text-sm hover:bg-muted"
+            className="flex items-center gap-1 rounded-lg border px-2 py-1.5 text-sm hover:bg-muted"
           >
             <Share2 className="h-4 w-4" />
             Share

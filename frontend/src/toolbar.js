@@ -51,7 +51,7 @@ export const PipelineToolbar = () => {
     },
   };
   return (
-    <div className="w-full border-b bg-white px-4 py-2">
+    <div className="w-full border-b bg-white px-4 py-2  shadow-black">
       <TopNav />
       <MidNav nav={Nav} selected={selected} setSelected={setSelected} />
 
